@@ -66,7 +66,7 @@ body::before {
   pointer-events: none;
   z-index: 9999;
 }
-.wrap { max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
+.wrap { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
 
 /* ── COVER ── */
 .cover {
@@ -678,6 +678,59 @@ body::before {
 /* ────────────────────────────── */
 /* TABLE OF CONTENTS PAGE STYLES  */
 /* ────────────────────────────── */
+.codex-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 28px;
+  text-decoration: none;
+  background: linear-gradient(135deg, rgba(233,196,106,0.08), rgba(214,40,40,0.06));
+  border: 1px solid rgba(233,196,106,0.4);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+.codex-link::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(233,196,106,0.12), transparent);
+  transition: left 0.6s ease;
+}
+.codex-link:hover::before { left: 100%; }
+.codex-link:hover {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(233,196,106,0.14), rgba(214,40,40,0.1));
+  box-shadow: 0 0 28px rgba(233,196,106,0.25), 0 8px 24px rgba(0,0,0,0.5);
+  transform: translateY(-2px);
+}
+.codex-icon {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 900;
+  font-size: 38px;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 16px rgba(233,196,106,0.6);
+  flex-shrink: 0;
+}
+.codex-txt { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.codex-en {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.codex-ko {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-bright);
+  letter-spacing: 0.02em;
+}
+.codex-link:hover .codex-ko { color: var(--gold); }
+
 .toc-page .page-inner {
   padding: 36px 44px 40px;
 }
@@ -868,6 +921,81 @@ body::before {
   20%  { box-shadow: 0 0 60px rgba(214,40,40,0.6), 0 0 100px rgba(214,40,40,0.3); }
   100% { box-shadow: 0 0 40px rgba(214,40,40,0.04), 0 8px 32px rgba(0,0,0,0.4); }
 }
+
+/* ── NEW: Canvas particle layer (live floating spirits) ── */
+#spirit-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+}
+
+/* ── NEW: Scroll-reveal entrance for pages ── */
+.page.reveal-pending {
+  opacity: 0;
+  transform: translateY(40px) scale(0.985);
+}
+.page.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── NEW: Enhanced page hover (lift + crimson rim) ── */
+.page:not(.cover) {
+  transition: box-shadow 0.5s ease, transform 0.5s ease, border-color 0.5s ease;
+}
+.page:not(.cover):hover {
+  transform: translateY(-3px);
+  border-color: rgba(214,40,40,0.32);
+  box-shadow:
+    0 0 70px rgba(214,40,40,0.1),
+    0 18px 50px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ── NEW: Section title shimmer on hover within a page ── */
+.page:hover .vertical-glow.left,
+.page:hover .vertical-glow.right {
+  opacity: 1;
+}
+
+/* ── NEW: Component hover polish (additive, safe) ── */
+.method, .example, .quote, .block {
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+}
+.method:hover, .example:hover, .block:hover {
+  border-color: rgba(214,40,40,0.4) !important;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.45), 0 0 24px rgba(214,40,40,0.08);
+  transform: translateY(-2px);
+}
+.quote:hover {
+  border-color: rgba(233,196,106,0.5);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 20px rgba(233,196,106,0.1);
+}
+.dice {
+  transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+.sec-title:hover .sec-ico {
+  filter: drop-shadow(0 0 8px currentColor);
+  transform: scale(1.08) rotate(-4deg);
+  transition: all 0.35s ease;
+}
+
+/* ── NEW: Mobile particle/perf + reduced motion ── */
+@media (max-width: 600px) {
+  #spirit-canvas { opacity: 0.4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #spirit-canvas { display: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .page.reveal-pending { opacity: 1 !important; transform: none !important; }
+}
+
 
 /* Dice tag — glow on data */
 .dice {
@@ -1276,6 +1404,7 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
   </div>
   <div class="cover-tag">TACTICAL EXORCIST · TRPG RULEBOOK</div>
   <div class="cover-main" data-text="택티컬 퇴마사">택티컬 퇴마사</div>
+  <div class="cover-rule-badge">캐릭터 생성 &amp; 기본 룰</div>
   <p class="cover-desc">단련된 심신은 결코 결과를 배신하지 않는다.<br><strong>경계의 존재들과 맞서는 퇴마사들의 전술 TRPG.</strong><br>경계대책과 퇴마 제6반 공식 룰북.</p>
   <a href="#page-toc" class="cover-btn" style="text-decoration:none;">▶ &nbsp;룰 시작하기</a>
 </div>
@@ -1391,6 +1520,16 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         <a href="#page-51" class="toc-item"><span class="toc-label">3-2-6 타 부서 지원 / 3-2-7 퇴마술과의 결별</span><span class="toc-dot"></span><span class="toc-num">51</span></a>
         <a href="#page-52" class="toc-item"><span class="toc-label">3-2-7 · 식법절인 (기본·전문화)</span><span class="toc-dot"></span><span class="toc-num">52</span></a>
         <a href="#page-53" class="toc-item"><span class="toc-label">3-2-7~8 · 식법절인 (희귀) / 매각 / 종료</span><span class="toc-dot"></span><span class="toc-num">53</span></a>
+      </div>
+
+      <div style="text-align:center; margin-top:32px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.07);">
+        <a href="https://hangyul219-prog.github.io/TacticalExorcistcodex/" target="_blank" rel="noopener" class="codex-link">
+          <span class="codex-icon">永</span>
+          <span class="codex-txt">
+            <span class="codex-en">WORLD CODEX · 世界観設定集</span>
+            <span class="codex-ko">→ 세계관 설정집으로 이동</span>
+          </span>
+        </a>
       </div>
     </div>
 
@@ -1639,7 +1778,7 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         <span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.1em;clip-path:polygon(0 0, calc(100% - 6px) 0, 100% 100%, 6px 100%);">초기치 : 7</span>
       </div>
       <div style="padding:14px 18px;font-size:13px;line-height:1.85;color:var(--text);">
-        박아 넣음으로써 계이(적)에게 데미지를 주는 제구(기어). 또한, <strong>주련강승과 조합하여 결계</strong>를 친다.<br><br>
+        박아 넣음으로써 게이(적)에게 데미지를 주는 제구(기어). 또한, <strong>주련강승과 조합하여 결계</strong>를 친다.<br><br>
         자신의 턴에, 근접 공격 또는 원거리 공격에 사용할 수 있다. 단, 공격에 사용한 하라이구시는 공격 후에 소비된다. 근접 공격에 사용한 경우는 <strong>「<span class="dice">1d6</span>점」</strong>, 원거리 공격에 사용한 경우는 <strong>「3점」</strong>의 물리 데미지를 준다.
         <div style="margin-top:10px;font-size:11px;color:var(--text-dim);">→ 자세한 내용은 2-5: 근접 공격과 원거리 공격을 참조.</div>
       </div>
@@ -1651,7 +1790,7 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         <span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.1em;clip-path:polygon(0 0, calc(100% - 6px) 0, 100% 100%, 6px 100%);">초기치 : 21</span>
       </div>
       <div style="padding:14px 18px;font-size:13px;line-height:1.85;color:var(--text);">
-        결계를 쳐서 계이(적)에게 가하는 물리 공격을 유효화하거나, 계이의 이동을 저지하는 제구(기어). 소비하는 것으로 맵 상에 <strong>「결계」</strong>를 치고, 「결계의 효능 (후술)」에서 효과를 선택하여 부여할 수 있다.
+        결계를 쳐서 게이(적)에게 가하는 물리 공격을 유효화하거나, 게이의 이동을 저지하는 제구(기어). 소비하는 것으로 맵 상에 <strong>「결계」</strong>를 치고, 「결계의 효능 (후술)」에서 효과를 선택하여 부여할 수 있다.
         <div style="margin-top:10px;font-size:11px;color:var(--text-dim);">→ 결계에 관한 룰은 2-7: 하라이구시와 결계의 설치에 대해를 참조.</div>
       </div>
     </div>
@@ -1695,9 +1834,9 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         <span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.1em;clip-path:polygon(0 0, calc(100% - 6px) 0, 100% 100%, 6px 100%);">초기치 : 3</span>
       </div>
       <div style="padding:14px 18px;font-size:13px;line-height:1.85;color:var(--text);">
-        의사적인 예(穢, 부정함)를 발생시킴으로써 저위의 계이를 꾀어내는 유도 제구. 낚시나 주변 소탕에 쓰인다. 수의(재킷)를 입고 있다면 인체에 영향이 나오지 않을 정도의 출력으로 억제한 범용 모델.<br><br>
-        이 제구를 소지한 캐릭터는, 자신의 턴에 이 제구를 사용할 수 있다. 이 제구의 사용을 선언했을 때, 자신을 중심으로 한 <strong>7×7 칸</strong>의 범위 중 한 곳을 선택하여 이 제구의 「설치 장소」로 한다. 「설치 장소」를 중심으로 한 <strong>5×5 칸</strong>에 있는 1호급 「계이」 캐릭터는, 다음 턴을 맞이했을 때 「설치 장소」의 칸을 향해 공격을 행한다. 「설치 장소」에 아무것도 없을 경우, 공격은 자동으로 실패가 된다. 「설치 장소」에 어떠한 캐릭터나 오브젝트가 존재할 경우, 그 캐릭터가 공격 대상이 된다.
-        <div style="margin-top:10px;padding:8px 12px;background:rgba(214,40,40,0.08);border-left:2px solid var(--red);font-size:11.5px;color:var(--red);">※ 이 제구는 2호급 이상의 「계이」 캐릭터에게는 효과가 없다.</div>
+        의사적인 예(穢, 부정함)를 발생시킴으로써 저위의 게이를 꾀어내는 유도 제구. 낚시나 주변 소탕에 쓰인다. 수의(재킷)를 입고 있다면 인체에 영향이 나오지 않을 정도의 출력으로 억제한 범용 모델.<br><br>
+        이 제구를 소지한 캐릭터는, 자신의 턴에 이 제구를 사용할 수 있다. 이 제구의 사용을 선언했을 때, 자신을 중심으로 한 <strong>7×7 칸</strong>의 범위 중 한 곳을 선택하여 이 제구의 「설치 장소」로 한다. 「설치 장소」를 중심으로 한 <strong>5×5 칸</strong>에 있는 1호급 「게이」 캐릭터는, 다음 턴을 맞이했을 때 「설치 장소」의 칸을 향해 공격을 행한다. 「설치 장소」에 아무것도 없을 경우, 공격은 자동으로 실패가 된다. 「설치 장소」에 어떠한 캐릭터나 오브젝트가 존재할 경우, 그 캐릭터가 공격 대상이 된다.
+        <div style="margin-top:10px;padding:8px 12px;background:rgba(214,40,40,0.08);border-left:2px solid var(--red);font-size:11.5px;color:var(--red);">※ 이 제구는 2호급 이상의 「게이」 캐릭터에게는 효과가 없다.</div>
       </div>
     </div>
 
@@ -1720,7 +1859,7 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         <span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.1em;clip-path:polygon(0 0, calc(100% - 6px) 0, 100% 100%, 6px 100%);">초기치 : 3</span>
       </div>
       <div style="padding:14px 18px;font-size:13px;line-height:1.85;color:var(--text);">
-        내부에 채워 넣은 지체(贄体, 제물)에 순간적인 부하를 가함으로써 저주 작용을 발생시켜 주변 일대를 공격하는, 대(對)계이용 공격 병장기 중 하나. 직경 30mm 높이 100mm 정도의 흑단으로 만들어진 통에 끈이 달린 안전 부적이 붙어 있으며, 부적을 벗겨내고 투척하여 사용한다.<br><br>
+        내부에 채워 넣은 지체(贄体, 제물)에 순간적인 부하를 가함으로써 저주 작용을 발생시켜 주변 일대를 공격하는, 대(對)게이용 공격 병장기 중 하나. 직경 30mm 높이 100mm 정도의 흑단으로 만들어진 통에 끈이 달린 안전 부적이 붙어 있으며, 부적을 벗겨내고 투척하여 사용한다.<br><br>
         이 제구를 소지한 캐릭터는, 자신의 턴에, 공격 대신 이 제구를 사용할 수 있다. 자신을 중심으로 한 <strong>5×5 칸</strong> 중 어느 한 칸을 「중심」으로 정하고, 「중심」에 인접한 <strong>3×3 칸</strong>에 있는 캐릭터 전원에게 <strong>2점의 영적 데미지</strong>를 준다.
         <div style="margin-top:10px;padding:8px 12px;background:rgba(72,202,228,0.07);border-left:2px solid var(--cyan);font-size:11.5px;color:var(--cyan);">※ 이 공격에 대한 회피 난이도는 『NORMAL』이 된다.</div>
       </div>
@@ -1754,14 +1893,14 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         <span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.1em;clip-path:polygon(0 0, calc(100% - 6px) 0, 100% 100%, 6px 100%);">초기치 : 3</span>
       </div>
       <div style="padding:14px 18px;font-size:13px;line-height:1.85;color:var(--text);">
-        계이의 의사(疑似) 지각에 간섭하는 저출력의 결계를 발생시킴으로써, 대 계이용 액티브 스텔스로서 기능하는 제구. 순간적인 출력을 중시한 기습·회피용 병장기로서 조정된 결과, 3회만에 배터리를 다 쓴다.<br><br>
+        게이의 의사(疑似) 지각에 간섭하는 저출력의 결계를 발생시킴으로써, 대 게이용 액티브 스텔스로서 기능하는 제구. 순간적인 출력을 중시한 기습·회피용 병장기로서 조정된 결과, 3회만에 배터리를 다 쓴다.<br><br>
         이 제구를 소지한 캐릭터는, 자신의 턴에 이 제구의 사용을 선언할 수 있다. 이 제구를 기동한 캐릭터는, 다음 턴의 자신의 차례를 맞이할 때까지, 이하의 효과를 얻는다.
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
           <div style="padding:8px 12px;background:rgba(233,196,106,0.07);border-left:2px solid var(--gold);font-size:12.5px;color:var(--text);">
-            ① 이 캐릭터가 행하는, 「계이」 캐릭터에 대한 공격은, <strong>판정 난이도가 1단계 저하</strong>된다 (최저 『난이도 : KIDS』)
+            ① 이 캐릭터가 행하는, 「게이」 캐릭터에 대한 공격은, <strong>판정 난이도가 1단계 저하</strong>된다 (최저 『난이도 : KIDS』)
           </div>
           <div style="padding:8px 12px;background:rgba(233,196,106,0.07);border-left:2px solid var(--gold);font-size:12.5px;color:var(--text);">
-            ② 이 캐릭터가 행하는, 「계이」 캐릭터에 대한 공격은, <strong>회피 판정의 난이도가 1단계 상승</strong>한다 (최고 『난이도 : ULTRA HARD』)
+            ② 이 캐릭터가 행하는, 「게이」 캐릭터에 대한 공격은, <strong>회피 판정의 난이도가 1단계 상승</strong>한다 (최고 『난이도 : ULTRA HARD』)
           </div>
         </div>
       </div>
@@ -1943,7 +2082,7 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
         </div>
       </div>
       <div style="padding:14px 18px;font-size:13px;line-height:1.9;color:var(--text);">
-        <p style="margin-bottom:10px;">가호의 힘을 높여, 전방을 향해 방출하는 퇴마술. 계이가 밀집한 곳에 발사함으로써, 효율적으로 적을 일소한다.</p>
+        <p style="margin-bottom:10px;">가호의 힘을 높여, 전방을 향해 방출하는 퇴마술. 게이가 밀집한 곳에 발사함으로써, 효율적으로 적을 일소한다.</p>
         <p style="margin-bottom:10px;">술자는 자신의 순번에, 공격 대신에 이 술법을 사용할 수 있다. 발동에 성공했을 경우, 술자를 중심으로 한 <strong>5×5칸</strong> 중 어느 한 칸을 「중심」으로 정하고, 「중심」에서부터 <strong>3×3칸</strong>에 있는 대상 전원에게 <strong>「4」점의 영적 데미지</strong>를 준다 (회피 난이도 『NORMAL』). 이때, 술자는 「데미지를 주지 않을 대상」을 지정해도 좋다.</p>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
           <div style="padding:9px 14px;background:rgba(214,40,40,0.06);border:1px solid rgba(214,40,40,0.2);border-radius:2px;">
@@ -2159,7 +2298,7 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
       <div style="padding:14px 18px;font-size:13px;line-height:1.9;color:var(--text);">
         <p style="margin-bottom:10px;">가호의 힘으로 강화된 특수한 보법을 구사하는 퇴마술. 적의 공격을 회피하면서 전장을 누비는 기동·회피 특화형 술법.</p>
         <div style="padding:12px 14px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.18);border-radius:2px;font-size:12.5px;color:var(--text);margin-bottom:12px;">
-          발동에 성공했을 경우 다음 자신의 차례를 맞이할 때까지, <strong>【기동력】 값이 +2</strong> 되며, 계이 캐릭터의 공격에 대한 <strong>회피 판정에 다이스 +2개</strong>를 보충한다.
+          발동에 성공했을 경우 다음 자신의 차례를 맞이할 때까지, <strong>【기동력】 값이 +2</strong> 되며, 게이 캐릭터의 공격에 대한 <strong>회피 판정에 다이스 +2개</strong>를 보충한다.
         </div>
         <div style="display:flex;flex-direction:column;gap:7px;">
           <div style="padding:9px 14px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.18);border-radius:2px;">
@@ -7398,6 +7537,58 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
 <script>
 // Auto-inject visual enhancements into every .page
 (function(){
+  /* ───────────────────────────────────────────
+     NEW: Live canvas particles (floating spirits)
+  ─────────────────────────────────────────── */
+  const canvas = document.createElement('canvas');
+  canvas.id = 'spirit-canvas';
+  document.body.prepend(canvas);
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+  resize();
+  addEventListener('resize', resize);
+
+  const PCOLORS = [
+    'rgba(214,40,40,',   // red
+    'rgba(72,202,228,',  // cyan
+    'rgba(233,196,106,', // gold
+    'rgba(192,132,252,', // purple
+  ];
+  function mkP(){
+    return {
+      x: Math.random()*W,
+      y: Math.random()*H,
+      r: 0.4 + Math.random()*1.3,
+      a: 0.06 + Math.random()*0.4,
+      da: (Math.random()-0.5)*0.004,
+      dx: (Math.random()-0.5)*0.22,
+      dy: -0.1 - Math.random()*0.3,
+      c: PCOLORS[Math.floor(Math.random()*PCOLORS.length)]
+    };
+  }
+  const PCOUNT = innerWidth < 600 ? 36 : 95;
+  for(let i=0;i<PCOUNT;i++) particles.push(mkP());
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of particles){
+      p.x += p.dx; p.y += p.dy; p.a += p.da;
+      if(p.a<=0 || p.y<-12 || p.x<-12 || p.x>W+12){
+        Object.assign(p, mkP()); p.y = H+6;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.c + Math.max(0,p.a).toFixed(2) + ')';
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = p.c + '0.8)';
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(tick);
+  }
+  tick();
+
   const KANJI = ['退','魔','祓','穢','術','霊','戒','靖','護','神','咒','封','結','界','法'];
   document.querySelectorAll('.page').forEach((page, idx) => {
     // Skip cover page
@@ -7421,6 +7612,24 @@ tr:hover td { background: rgba(214,40,40,0.06) !important; transition: backgroun
       page.appendChild(wm);
     }
   });
+
+  /* ───────────────────────────────────────────
+     NEW: Scroll-reveal staggered entrance
+  ─────────────────────────────────────────── */
+  const revealPages = Array.from(document.querySelectorAll('.page')).filter(p => !p.classList.contains('cover') && p.id !== 'page-toc');
+  if ('IntersectionObserver' in window) {
+    revealPages.forEach(p => p.classList.add('reveal-pending'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.remove('reveal-pending');
+          e.target.classList.add('revealed');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    revealPages.forEach(p => io.observe(p));
+  }
 
   // Parallax: subtle mouse-following glow inside each page
   document.querySelectorAll('.page').forEach(page => {
